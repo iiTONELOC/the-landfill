@@ -1,0 +1,4 @@
+node_modules
+.eslintrc.js
+lib
+readmeExample.mjs
