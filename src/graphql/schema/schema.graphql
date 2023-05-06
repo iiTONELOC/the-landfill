@@ -1,0 +1,90 @@
+type User {
+  _id: ID!
+  username: String!
+  email: String!
+  role: String!
+  lists: [List]
+}
+
+type List {
+  _id: ID!
+  userId: ID!
+  name: String!
+  products: [UserProduct]
+}
+
+type UserProduct {
+  _id: ID!
+  quantity: Int!
+  notes: String
+  productData: Product!
+  productAlias: String
+  isCompleted: Boolean!
+}
+
+type Product {
+  _id: ID!
+  name: String!
+  barcode: [String!]
+  source: Source
+}
+
+type Source {
+  _id: ID!
+  name: String!
+  urlToSearchResult: String
+}
+
+type Auth {
+  token: ID!
+  user: User
+}
+
+type Query {
+  me: User
+  users: [User]
+  user(username: String!): User
+  lists: [List]
+  list(listId: ID!): List
+  products: [Product]
+  product(productId: ID!): Product
+  sources: [Source]
+  source(sourceId: ID!): Source
+  userProducts: [UserProduct]
+  userProduct(userProductId: ID!): UserProduct
+}
+
+type Mutation {
+  login(email: String!, password: String!): Auth
+  addUser(username: String!, email: String!, password: String!): Auth
+  addList(name: String!): List
+  addProduct(name: String!, barcode: [String!], source: ID!): Product
+  addSource(name: String!, urlToSearchResult: String): Source
+  addUserProduct(
+    quantity: Int!
+    notes: String
+    productData: ID!
+    productAlias: String
+    isCompleted: Boolean!
+  ): UserProduct
+  updateUserProduct(
+    userProductId: ID!
+    quantity: Int!
+    notes: String
+    productData: ID!
+    productAlias: String
+    isCompleted: Boolean!
+  ): UserProduct
+  removeUserProduct(userProductId: ID!): UserProduct
+  updateList(listId: ID!, name: String!): List
+  removeList(listId: ID!): List
+  updateProduct(
+    productId: ID!
+    name: String!
+    barcode: [String!]
+    source: ID!
+  ): Product
+  removeProduct(productId: ID!): Product
+  updateSource(sourceId: ID!, name: String!, urlToSearchResult: String): Source
+  removeSource(sourceId: ID!): Source
+}
