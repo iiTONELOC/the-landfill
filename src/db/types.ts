@@ -1,6 +1,8 @@
-import mongoose, { HydratedDocument, Schema } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 /** Mongoose Schemas */
+
+// USER
 export interface IUser {
     username: string;
     email: string;
@@ -17,6 +19,7 @@ export enum UserRoles {
     SITE_OWNER = 'site.owner'
 }
 
+// SOURCE
 export interface ISource {
     name: AvailableSources;
     urlToSearchResult?: string;
@@ -29,18 +32,38 @@ export enum AvailableSources {
     USER_PROVIDED = 'userProvided'
 }
 
+// PRODUCT
 export interface IProduct {
     name: string;
     barcode: string[];
-    source: Schema.Types.ObjectId;
+    source: Types.ObjectId;
 }
 
+// USER PRODUCT
+// This is a wrapper for the product model that allows the user to make their
+// own changes without affecting the database's integrity.
+export interface IUserProduct {
+    productData: Types.ObjectId;
+    userId: Types.ObjectId;
+    productAlias?: string;
+    quantity: number;
+    notes?: string;
+}
 
+// LIST
+export interface IList {
+    userId: Types.ObjectId;
+    name: string;
+    products: Types.ObjectId[];
+    isDefault: boolean;
+}
 
 /** Mongoose Models */
 export type UserModel = HydratedDocument<IUser> & IUser;
+export type ListModel = HydratedDocument<IList> & IList;
 export type SourceModel = HydratedDocument<ISource> & ISource;
 export type ProductModel = HydratedDocument<IProduct> & IProduct;
+export type UserProductModel = HydratedDocument<IUserProduct> & IUserProduct;
 
 
 /** Database Connection */

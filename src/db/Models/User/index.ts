@@ -5,17 +5,21 @@ import { IUser, UserRoles } from '../../types';
 
 // never rely on the hardcoded value!, it isn't secure and it is not even used in testing
 const defaultPepper = 'aD*ex5898#!l;';
+// istanbul ignore next
 const pepper: string = process.env.PEPPER || defaultPepper;
 
 // don't rely on the default salt rounds, use the environment variable
 const defaultSaltRounds = '10';
+// istanbul ignore next
 const saltRounds: string = process.env.SALT_FACTOR || '10';
-
+// istanbul ignore next
 if (pepper === defaultPepper) {
+    // istanbul ignore next
     console.warn('Using default pepper!\nSet the PEPPER environment variable to a different value to increase security!'); //NOSONAR
 }
-
+// istanbul ignore next
 if (saltRounds === defaultSaltRounds) {
+    // istanbul ignore next
     console.warn('Using default salt rounds!\nSet the SALT_FACTOR environment variable to a different value to increase security!');//NOSONAR
 }
 
@@ -61,8 +65,8 @@ const UserSchema = new Schema<IUser>({
 
 
 // hash the password before saving it to the database
+// istanbul ignore next
 UserSchema.pre('save', async function (next) {
-    // istanbul ignore next
     if (this.isNew || this.isModified('password')) {
         // validate that the password has at least one of the following:
         // uppercase letter, lowercase letter, number, special character

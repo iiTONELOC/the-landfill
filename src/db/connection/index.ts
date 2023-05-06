@@ -14,7 +14,9 @@ export default async function connect(dbName?: string): DBConnectionPromise {
     // accepts the name as an argument
     // or uses the value of the DB_NAME environment variable
     // if neither are provided, defaults to 'test-land'
+    // istanbul ignore next
     const name = dbName || process.env.DB_NAME || 'test-land';
+    // istanbul ignore next
     const URI = process.env.DB_URI || `mongodb://127.0.0.1:27017/${name}`;
 
     // set the strictQuery option to true

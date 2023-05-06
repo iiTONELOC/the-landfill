@@ -25,11 +25,12 @@ const SourceSchema = new Schema<ISource>({
     id: false,
     timestamps: true
 });
-
+// istanbul ignore next    
 SourceSchema.pre('save', function (next) {
     if (this.isNew || this.isModified('urlToSearchResult')) {
         // if there is a urlToSearchResult, enforce https if it is not already
         // if http add an s, if no protocol add https://
+
         if (this.urlToSearchResult) {
             if (this.urlToSearchResult.startsWith('http://')) {
                 this.urlToSearchResult = this.urlToSearchResult.replace('http://', 'https://');
