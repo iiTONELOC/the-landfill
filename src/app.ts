@@ -1,5 +1,6 @@
-import { default as express, Express } from 'express';
 import 'dotenv/config';
+import { default as express, Express } from 'express';
+
 
 const app: Express = express();
 const port = process.env.PORT || 3001;
@@ -9,7 +10,6 @@ app.disable('x-powered-by');
 app.disable('etag');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 
 
 app.use('/', (req, res) => {

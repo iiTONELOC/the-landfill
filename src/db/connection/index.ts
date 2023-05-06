@@ -44,7 +44,7 @@ export async function disconnectFromDB(database: typeof mongoose): DBDisconnectP
     }
     catch (error) {
         // istanbul ignore next
-        console.error('Error disconnecting to the database!\n', error);//NOSONAR
+        console.error('Error disconnecting from the database!\n', error);//NOSONAR
         // istanbul ignore next
         return false;
     }
