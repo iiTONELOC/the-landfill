@@ -46,6 +46,7 @@ export interface IUserProduct {
     productData: Types.ObjectId;
     userId: Types.ObjectId;
     productAlias?: string;
+    isCompleted?: boolean;
     quantity: number;
     notes?: string;
 }

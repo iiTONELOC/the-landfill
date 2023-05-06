@@ -35,6 +35,12 @@ const ProductSchema = new Schema<IUserProduct>({
         trim: true,
         minLength: 3,
         maxLength: 250
+    },
+    isCompleted: {
+        type: Boolean,
+        required: false,
+        unique: false,
+        default: false
     }
 }, {
     id: false,
