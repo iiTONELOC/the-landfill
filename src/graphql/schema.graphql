@@ -55,7 +55,7 @@ type Query {
 }
 
 type Mutation {
-  login(email: String!, password: String!): Auth
+  loginUser(email: String!, password: String!): Auth
   addUser(username: String!, email: String!, password: String!): Auth
   addList(name: String!): List
   addProduct(name: String!, barcode: [String!], source: ID!): Product

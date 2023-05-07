@@ -46,7 +46,7 @@ const testUserData: IUser = {
 };
 
 beforeAll(async () => {
-    dbConnection = await connect();
+    dbConnection = await connect('test-land-list');
 });
 
 afterAll(async () => {

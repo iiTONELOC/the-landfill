@@ -1,4 +1,4 @@
-import mongoose, { HydratedDocument, Types } from 'mongoose';
+import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 
 /** Mongoose Schemas */
 
@@ -7,8 +7,16 @@ export interface IUser {
     username: string;
     email: string;
     password: string;
-    role: UserRoles;
+    role?: UserRoles;
 }
+
+export interface IUserMethods {
+    isCorrectPassword: (password: string) => Promise<boolean>;
+}
+
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type IUserModel = Model<IUser, {}, IUserMethods>;
 
 export enum UserRoles {
     BASIC = 'app.user',

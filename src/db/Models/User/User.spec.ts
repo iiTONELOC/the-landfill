@@ -54,7 +54,7 @@ let dbConnection: DBConnection = null;
 
 // connect to the local test database
 beforeAll(async () => {
-    dbConnection = await connect('test-land');
+    dbConnection = await connect('test-land-user');
 
     // create a pool of test users
     for (const user of testUserData) {

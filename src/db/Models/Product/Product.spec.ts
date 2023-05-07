@@ -14,7 +14,7 @@ const testSourceData: ISource = {
 };
 
 beforeAll(async () => {
-    dbConnection = await connect();
+    dbConnection = await connect('test-land-product');
     testSource = await Source.create(testSourceData);
 });
 

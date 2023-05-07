@@ -1,5 +1,3 @@
-import { Request } from 'express';
-
 import {
     UserProductModel,
     AvailableSources,
@@ -7,6 +5,7 @@ import {
     IUserProduct,
     ProductModel,
     SourceModel,
+    IUserModel,
     ListModel,
     UserModel,
     UserRoles,
@@ -27,6 +26,7 @@ export type {
     SourceModel,
     IJwtPayload,
     ListModel,
+    IUserModel,
     UserModel,
     UserRoles,
     IProduct,
@@ -35,7 +35,6 @@ export type {
     IUser
 };
 
-
-export interface IRequest extends Request {
-    user: IJwtPayload;
+export interface AuthenticatedContext {
+    user: IJwtPayload | undefined;
 }
