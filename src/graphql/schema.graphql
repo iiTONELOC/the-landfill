@@ -11,6 +11,7 @@ type List {
   userId: ID!
   name: String!
   products: [UserProduct]
+  productsCount: Int
 }
 
 type UserProduct {
@@ -42,24 +43,26 @@ type Auth {
 
 type Query {
   me: User
-  users: [User]
-  user(username: String!): User
-  lists: [List]
+  # users: [User]
+  # user(username: String!): User
+  # lists: [List]
   list(listId: ID!): List
   products: [Product]
   product(productId: ID!): Product
-  sources: [Source]
-  source(sourceId: ID!): Source
-  userProducts: [UserProduct]
+  # sources: [Source]
+  # source(sourceId: ID!): Source
+  # userProducts: [UserProduct]
   userProduct(userProductId: ID!): UserProduct
 }
 
 type Mutation {
   loginUser(email: String!, password: String!): Auth
   addUser(username: String!, email: String!, password: String!): Auth
+  updateUser(username: String, email: String): User
+  deleteUser(userId: ID!): User
   addList(name: String!): List
-  addProduct(name: String!, barcode: [String!], source: ID!): Product
-  addSource(name: String!, urlToSearchResult: String): Source
+  # addProduct(name: String!, barcode: [String!], source: ID!): Product
+  # addSource(name: String!, urlToSearchResult: String): Source
   addUserProduct(
     quantity: Int!
     notes: String
@@ -78,13 +81,13 @@ type Mutation {
   removeUserProduct(userProductId: ID!): UserProduct
   updateList(listId: ID!, name: String!): List
   removeList(listId: ID!): List
-  updateProduct(
-    productId: ID!
-    name: String!
-    barcode: [String!]
-    source: ID!
-  ): Product
-  removeProduct(productId: ID!): Product
-  updateSource(sourceId: ID!, name: String!, urlToSearchResult: String): Source
+  # updateProduct(
+  #   productId: ID!
+  #   name: String!
+  #   barcode: [String!]
+  #   source: ID!
+  # ): Product
+  # removeProduct(productId: ID!): Product
+  # updateSource(sourceId: ID!, name: String!, urlToSearchResult: String): Source
   removeSource(sourceId: ID!): Source
 }

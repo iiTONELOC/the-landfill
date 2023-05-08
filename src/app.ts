@@ -20,6 +20,7 @@ const startServer = async () => {
     const app = express();
     const port = process.env.PORT || 3001;
     const httpServer = http.createServer(app);
+    const isProduction = process.env.NODE_ENV === 'production';
 
     app.set('port', port);
     app.disable('x-powered-by');
@@ -31,7 +32,7 @@ const startServer = async () => {
         typeDefs: fs.readFileSync(path.join(__dirname, './graphql/schema.graphql'), 'utf8'),
         resolvers,
         plugins: [ApolloServerPluginDrainHttpServer({ httpServer }),
-        process.env.NODE_ENV !== 'production' ? ApolloServerPluginLandingPageLocalDefault({ footer: false })
+        isProduction ? ApolloServerPluginLandingPageLocalDefault({ footer: false })
             : undefined].filter(x => x) as any
     });
 
@@ -50,10 +51,11 @@ const startServer = async () => {
     );
 
     // await successful connection to the database
-    await connect();
+
+    await connect(isProduction ? process.env.DB_URI : process.env.DB_NAME);
     // start the http server
     await new Promise<void>(resolve => httpServer.listen({ port }, resolve));
-    process.env.NODE_ENV !== 'production' && console.log(`🚀 Development Server ready at http://localhost:${port}/graphql\n`);//NOSONAR
+    !isProduction && console.log(`🚀 Development Server ready at http://localhost:${port}/graphql\n`);//NOSONAR
 };
 
 startServer();

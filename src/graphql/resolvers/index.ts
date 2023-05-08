@@ -7,6 +7,8 @@ export const resolvers = {
     },
     Mutation: {
         addUser: userMutations.addUser,
-        loginUser: userMutations.loginUser
+        loginUser: userMutations.loginUser,
+        updateUser: userMutations.updateUser,
+        deleteUser: userMutations.deleteUser,
     }
 };

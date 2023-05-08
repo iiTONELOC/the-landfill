@@ -55,7 +55,7 @@ describe('userQueries', () => {
             expect(userController.userQueries.queryMe).toBeDefined();
         });
 
-        it('should be able to find the current user', async () => {
+        it('should be able to find the current user from the context', async () => {
             const result = await userController.userQueries.queryMe(null, null,
                 {
                     user: {
@@ -65,7 +65,11 @@ describe('userQueries', () => {
                     }
                 });
             expect(result).toBeDefined();
-            expect(result).toEqual(testUser);
+            const expectedResult = { ...testUser };
+            // eslint-disable-next-line
+            // @ts-ignore
+            expectedResult.password = undefined;
+            expect(result).toEqual(expectedResult);
 
             expect.assertions(2);
         });
@@ -115,6 +119,13 @@ describe('userQueries', () => {
 
             expect.assertions(6);
         });
+
+        it('should throw an error if the user already exists', async () => {
+            await expect(userController.userMutations.addUser(null, testUserData, {} as AuthenticatedContext))
+                .rejects.toThrowError();
+
+            expect.assertions(1);
+        });
     });
 
     describe('loginUser', () => {
@@ -123,7 +134,7 @@ describe('userQueries', () => {
         });
 
         it('should be able to login a user', async () => {
-            const result = await userController.userMutations.loginUser(null, testUserData, {} as AuthenticatedContext);
+            const result = await userController.userMutations.loginUser(null, testUserData);
             const payload = result?.token ? (await jwt.verify(result.token, process.env.JWT_SECRET as string)) as IJwtPayload : null;
 
             expect(result).toBeDefined();
@@ -143,5 +154,83 @@ describe('userQueries', () => {
 
             expect.assertions(10);
         });
+
+        it('should throw an error if the user does not exist', async () => {
+            try {
+                await userController.userMutations.loginUser(null, {
+                    username: 'testUser451',
+                    email: 'testBananas@test.com',
+                    password: 'testPassword1!'
+                })
+            } catch (error) {
+                expect(error).toBeDefined();
+                // eslint-disable-next-line
+                // @ts-ignore
+                expect(error?.message).toBe('Incorrect credentials');
+
+                expect.assertions(2);
+            }
+        });
+
+        it('should throw an error if the password is incorrect', async () => {
+            try {
+                await userController.userMutations.loginUser(null, {
+                    username: testUserData.username,
+                    email: testUserData.email,
+                    password: 'testPassword2!'
+                })
+            } catch (error) {
+                expect(error).toBeDefined();
+                // eslint-disable-next-line
+                // @ts-ignore
+                expect(error?.message).toBe('Incorrect credentials');
+
+                expect.assertions(2);
+            }
+        });
     });
+
+    describe('updateUser', () => {
+        it('should be defined', () => {
+            expect(userController.userMutations.updateUser).toBeDefined();
+        });
+
+        it('should be able to update a user\'s username from context', async () => {
+            const result = await userController.userMutations.updateUser(null, {
+                username: 'testUser275'
+            }, { user: { _id: testUser._id, username: testUser.username, email: testUser.email } });
+
+            expect(result).toBeDefined();
+            expect(result?.username).toBe('testUser275');
+
+            expect.assertions(2);
+        });
+
+        it('should be able to update a user\'s email from context', async () => {
+            const result = await userController.userMutations.updateUser(null, {
+                email: 'testUser275@test.com'
+            }, { user: { _id: testUser._id, username: testUser.username, email: testUser.email } });
+
+            expect(result).toBeDefined();
+            expect(result?.email).toBe('testUser275@test.com');
+
+            expect.assertions(2);
+        });
+    });
+
+    describe('deleteUser', () => {
+        it('should be defined', () => {
+            expect(userController.userMutations.deleteUser).toBeDefined();
+        });
+
+        it('should be able to delete a user', async () => {
+            const result = await userController.userMutations.deleteUser(null, null, { user: { _id: testUser._id, username: testUser.username, email: testUser.email } });
+
+            expect(result).toBeDefined();
+            expect(result._id.toString()).toEqual(testUser._id.toString());
+
+            expect.assertions(2);
+        });
+    });
+
 });
