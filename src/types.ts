@@ -1,4 +1,6 @@
-import {
+import { IJwtPayload } from './auth/types';
+
+export type {
     UserProductModel,
     AvailableSources,
     DBConnection,
@@ -15,25 +17,13 @@ import {
     IUser
 } from './db/types';
 
-import { IJwtPayload } from './auth/types';
+export type { IJwtPayload };
 
 export type {
-    UserProductModel,
-    AvailableSources,
-    DBConnection,
-    IUserProduct,
-    ProductModel,
-    SourceModel,
-    IJwtPayload,
-    ListModel,
-    IUserModel,
-    UserModel,
-    UserRoles,
-    IProduct,
-    ISource,
-    IList,
-    IUser
-};
+    IBarcodeLookupResult,
+    IxPathLookUpResult,
+    IxPath
+} from './barcodeSearch/types';
 
 export interface AuthenticatedContext {
     user: IJwtPayload | undefined;
