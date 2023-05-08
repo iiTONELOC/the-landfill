@@ -18,7 +18,7 @@ const ListSchema = new Schema<IList>({
     },
     products: [{
         type: Schema.Types.ObjectId,
-        ref: 'UserProduct',
+        ref: 'ListItem',
         required: false
     }],
     isDefault: {

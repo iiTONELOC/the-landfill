@@ -3,11 +3,13 @@ import { IJwtPayload } from './auth/types';
 export type {
     UserProductModel,
     AvailableSources,
+    ListItemModel,
     DBConnection,
     IUserProduct,
     ProductModel,
     SourceModel,
     IUserModel,
+    IListItem,
     ListModel,
     UserModel,
     UserRoles,

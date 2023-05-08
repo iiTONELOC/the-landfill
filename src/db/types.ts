@@ -54,10 +54,9 @@ export interface IUserProduct {
     productData: Types.ObjectId;
     userId: Types.ObjectId;
     productAlias?: string;
-    isCompleted?: boolean;
-    quantity: number;
-    notes?: string;
 }
+
+
 
 // LIST
 export interface IList {
@@ -67,12 +66,23 @@ export interface IList {
     isDefault: boolean;
 }
 
+export interface IListItem {
+    listId: Types.ObjectId;
+    productId: Types.ObjectId;
+    username: string;
+    quantity?: number;
+    notes?: string;
+    isCompleted?: boolean;
+}
+
 /** Mongoose Models */
 export type UserModel = HydratedDocument<IUser> & IUser;
 export type ListModel = HydratedDocument<IList> & IList;
 export type SourceModel = HydratedDocument<ISource> & ISource;
 export type ProductModel = HydratedDocument<IProduct> & IProduct;
+export type ListItemModel = HydratedDocument<IListItem> & IListItem;
 export type UserProductModel = HydratedDocument<IUserProduct> & IUserProduct;
+
 
 
 /** Database Connection */

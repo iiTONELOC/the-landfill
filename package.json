@@ -5,13 +5,14 @@
   "main": "lib/app.js",
   "author": "AnthonyTropeano",
   "license": "UNLICENSED",
+  "private": true,
   "scripts": {
     "dev": "nodemon src/app.ts",
     "build": "npm run lint && rimraf lib/ && tsc",
     "start": "node lib/app.js",
-    "test": "jest",
+    "test": "jest ",
     "lint": "eslint src/**/*.ts",
-    "dev-test": "jest --watch",
+    "test-dev": "jest",
     "test-cov": "jest --coverage"
   },
   "dependencies": {
