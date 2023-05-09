@@ -12,10 +12,7 @@ const jestConfig: JestConfigWithTsJest = {
         useESM: true,
       },
     ],
-  },
-  testPathIgnorePatterns: [
-    '<rootDir>/node_modules/', '<rootDir>/dist/',
-    '<rootDir>/coverage/'],
+  }
 };
 
 export default jestConfig
