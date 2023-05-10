@@ -18,7 +18,7 @@ const ListSchema = new Schema<IList>({
     },
     products: [{
         type: Schema.Types.ObjectId,
-        ref: 'UserProduct',
+        ref: 'ListItem',
         required: false
     }],
     isDefault: {
@@ -29,7 +29,18 @@ const ListSchema = new Schema<IList>({
     }
 }, {
     id: false,
-    timestamps: true
+    timestamps: true,
+    toJSON: {
+        virtuals: true
+    },
+    toObject: {
+        virtuals: true
+    }
+});
+
+ListSchema.virtual('productCount').get(function (this: IList) {
+    const products = this?.products !== null ? this?.products : [];
+    return products.length || 0;
 });
 
 export default model<IList>('List', ListSchema);

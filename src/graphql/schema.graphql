@@ -1,0 +1,86 @@
+type User {
+  _id: ID!
+  username: String!
+  email: String!
+  role: String!
+  lists: [List]
+}
+
+type List {
+  _id: ID!
+  userId: ID!
+  name: String!
+  products: [ListItem]
+  isDefault: Boolean!
+  productCount: Int
+}
+
+type UserProduct {
+  _id: ID!
+  productData: Product!
+  productAlias: String
+}
+
+type ListItem {
+  _id: ID!
+  listId: ID!
+  product: UserProduct
+  username: String!
+  notes: String
+  quantity: Int!
+  isCompleted: Boolean!
+}
+
+type Product {
+  _id: ID!
+  name: String!
+  barcode: [String!]
+  source: Source
+}
+
+type Source {
+  _id: ID!
+  name: String!
+  urlToSearchResult: String
+}
+
+type Auth {
+  token: ID!
+  user: User
+}
+
+type Query {
+  me: User
+  list(listId: ID!): List
+  myLists: [List]
+  listItem(listItemId: ID!): ListItem
+}
+
+type Mutation {
+  loginUser(email: String!, password: String!): Auth
+  addUser(username: String!, email: String!, password: String!): Auth
+  updateUser(username: String, email: String): User
+  deleteUser: User
+  addList(name: String!): List
+  updateList(listId: ID!, name: String, isDefault: Boolean): List
+  removeList(listId: ID!): List
+  updateUserProduct(
+    userProductId: ID!
+    userId: ID!
+    productAlias: String
+  ): UserProduct
+  addToList(
+    listId: ID!
+    barcode: String!
+    notes: String
+    quantity: Int!
+    isCompleted: Boolean!
+  ): ListItem
+  updateListItem(
+    listItemId: ID!
+    notes: String
+    quantity: Int
+    isCompleted: Boolean
+  ): ListItem
+  removeFromList(listItemId: ID!, listId: ID!): ListItem
+}

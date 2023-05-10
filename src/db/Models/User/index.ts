@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
-import { IUser, UserRoles } from '../../types';
+import { IUser, IUserMethods, IUserModel, UserRoles } from '../../types';
 
 
 // never rely on the hardcoded value!, it isn't secure and it is not even used in testing
@@ -23,7 +23,7 @@ if (saltRounds === defaultSaltRounds) {
     console.warn('Using default salt rounds!\nSet the SALT_FACTOR environment variable to a different value to increase security!');//NOSONAR
 }
 
-const UserSchema = new Schema<IUser>({
+const UserSchema = new Schema<IUser, IUserModel, IUserMethods>({
     username: {
         type: String,
         required: true,
@@ -56,11 +56,16 @@ const UserSchema = new Schema<IUser>({
         type: String,
         default: UserRoles.BASIC,
         enum: UserRoles
-    }
+    },
+    lists: [{
+        type: Schema.Types.ObjectId,
+        ref: 'List',
+        required: false
+    }]
     // When the model is created we need to reference the user's lists
 }, {
     id: false,
-    timestamps: true
+    timestamps: true,
 });
 
 
@@ -85,9 +90,9 @@ UserSchema.pre('save', async function (next) {
 });
 
 // compare the password to the hashed password in the database
-UserSchema.methods.isCorrectPassword = async function (password: string) {
-    const isCorrect = await bcrypt.compare(`${pepper}${password}`, this.password);
+UserSchema.method('isCorrectPassword', async function (password: string) {
+    const isCorrect: boolean = await bcrypt.compare(`${pepper}${password}`, this.password);
     return isCorrect;
-};
+});
 
-export default model<IUser>('User', UserSchema);
+export default model<IUser, IUserModel>('User', UserSchema);

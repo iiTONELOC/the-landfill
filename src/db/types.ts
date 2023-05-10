@@ -1,4 +1,4 @@
-import mongoose, { HydratedDocument, Types } from 'mongoose';
+import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 
 /** Mongoose Schemas */
 
@@ -7,8 +7,17 @@ export interface IUser {
     username: string;
     email: string;
     password: string;
-    role: UserRoles;
+    role?: UserRoles;
+    lists?: Types.ObjectId[];
 }
+
+export interface IUserMethods {
+    isCorrectPassword: (password: string) => Promise<boolean>;
+}
+
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type IUserModel = Model<IUser, {}, IUserMethods>;
 
 export enum UserRoles {
     BASIC = 'app.user',
@@ -27,7 +36,7 @@ export interface ISource {
 
 export enum AvailableSources {
     BARCODE_INDEX = 'barcodeIndex',
-    UPC_ITEM_DB = 'upcItemDB',
+    UPC_ITEM_DB = 'upcItemDb',
     BARCODE_SPIDER = 'barcodeSpider',
     USER_PROVIDED = 'userProvided'
 }
@@ -46,9 +55,9 @@ export interface IUserProduct {
     productData: Types.ObjectId;
     userId: Types.ObjectId;
     productAlias?: string;
-    quantity: number;
-    notes?: string;
 }
+
+
 
 // LIST
 export interface IList {
@@ -58,12 +67,23 @@ export interface IList {
     isDefault: boolean;
 }
 
+export interface IListItem {
+    listId: Types.ObjectId;
+    product: Types.ObjectId;
+    username: string;
+    quantity?: number;
+    notes?: string;
+    isCompleted?: boolean;
+}
+
 /** Mongoose Models */
 export type UserModel = HydratedDocument<IUser> & IUser;
 export type ListModel = HydratedDocument<IList> & IList;
 export type SourceModel = HydratedDocument<ISource> & ISource;
 export type ProductModel = HydratedDocument<IProduct> & IProduct;
+export type ListItemModel = HydratedDocument<IListItem> & IListItem;
 export type UserProductModel = HydratedDocument<IUserProduct> & IUserProduct;
+
 
 
 /** Database Connection */

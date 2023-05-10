@@ -54,7 +54,7 @@ let dbConnection: DBConnection = null;
 
 // connect to the local test database
 beforeAll(async () => {
-    dbConnection = await connect('test-land');
+    dbConnection = await connect('test-land-user');
 
     // create a pool of test users
     for (const user of testUserData) {
@@ -89,11 +89,11 @@ describe('User Model', () => {
             expect(user).toHaveProperty('username', currentUserTestData.username);
             expect(user).toHaveProperty('email', currentUserTestData.email);
             expect(user).toHaveProperty('role', currentUserTestData.role);
-
+            expect(user).toHaveProperty('lists', []);
             index++;
         }
 
-        expect.assertions(7 * testUsers.length);
+        expect.assertions(8 * testUsers.length);
     });
 
     /**

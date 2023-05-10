@@ -68,8 +68,7 @@ describe('UserProduct Model', () => {
             const testUserProduct: IUserProduct = {
                 productData: newProduct._id,
                 userId: newUser._id,
-                quantity: 1,
-                productAlias: 'test product alias'
+                productAlias: 'test product alias',
             };
             const userProduct: UserProductModel = await UserProduct.create(testUserProduct);
 
@@ -77,12 +76,11 @@ describe('UserProduct Model', () => {
             expect(userProduct._id).toBeDefined();
             expect(userProduct.productData).toStrictEqual(testUserProduct.productData);
             expect(userProduct.userId).toStrictEqual(testUserProduct.userId);
-            expect(userProduct.quantity).toBe(testUserProduct.quantity);
             expect(userProduct.productAlias).toBe(testUserProduct.productAlias);
         } catch (error) {
             console.error(error);//NOSONAR
         }
 
-        expect.assertions(6);
+        expect.assertions(5);
     });
 });

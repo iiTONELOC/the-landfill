@@ -20,7 +20,10 @@ import {
     ISource,
     IList,
     IUser,
+    IListItem,
+    ListItemModel,
 } from '../../types';
+import ListItem from '../ListItem';
 
 
 let dbConnection: DBConnection = null;
@@ -46,7 +49,7 @@ const testUserData: IUser = {
 };
 
 beforeAll(async () => {
-    dbConnection = await connect();
+    dbConnection = await connect('test-land-list');
 });
 
 afterAll(async () => {
@@ -72,32 +75,57 @@ describe('List Model', () => {
             const testUserProduct: IUserProduct = {
                 productData: newProduct._id,
                 userId: newUser._id,
-                quantity: 1,
                 productAlias: 'test product alias'
             };
+
+            // FIXME: This has been updated to use an additional model. The list now has a list item model
+            // which then references the user product model. This is to allow for the list item to have
+            // additional information such as quantity, etc, and we only need to have one userProduct entry
+            // per product & user.
             const userProduct: UserProductModel = await UserProduct.create(testUserProduct);
 
-            // create a new list with the user product
+            // create a new ListItem with the Lis
+
+            // create a new list
             const testListData: IList = {
                 name: 'test list',
                 userId: newUser._id,
-                products: [userProduct._id],
-                isDefault: true
+                isDefault: true,
+                products: []
             };
 
             const newList: ListModel = await List.create(testListData);
 
-            expect(newList).toBeDefined();
-            expect(newList.name).toBe(testListData.name);
-            expect(newList.userId).toBe(testListData.userId);
-            expect(newList.products).toHaveLength(1);
-            expect(newList.products[0]).toBe(userProduct._id);
-            expect(newList.isDefault).toBe(testListData.isDefault);
+            // add the newList to the User's lists
+
+            const updatedUser = await User.findByIdAndUpdate(newUser._id, { $push: { lists: newList._id } }, { new: true }) as UserModel;
+
+            // create a new listItem with the userProduct and list information
+            const testListItemData: IListItem = {
+                listId: newList._id,
+                productId: userProduct._id,
+                username: newUser.username,
+            };
+
+            const newListItem: ListItemModel = await ListItem.create(testListItemData);
+
+            const updatedList: ListModel | null = await List.findByIdAndUpdate(newList._id, { $push: { products: newListItem._id } }, { new: true }).populate('products') as ListModel;
+
+
+            expect(updatedUser).toBeDefined();
+            expect(updatedUser.lists).toHaveLength(1);
+
+            expect(updatedList).toBeDefined();
+            expect(updatedList.name).toBe(testListData.name);
+            expect(updatedList.userId.toString()).toBe(testListData.userId.toString());
+            expect(updatedList.products).toHaveLength(1);
+            expect(updatedList.products[0]._id.toString()).toBe(newListItem._id.toString());
+            expect(updatedList.isDefault).toBe(testListData.isDefault);
         }
         catch (err) {
             console.error(err);
         }
 
-        expect.assertions(6);
+        expect.assertions(8);
     });
 });

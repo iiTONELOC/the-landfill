@@ -12,7 +12,7 @@ const testSource: ISource = {
 let dbConnection: DBConnection = null;
 
 beforeAll(async () => {
-    dbConnection = await connect('test-land');
+    dbConnection = await connect('test-land-source');
 });
 
 afterAll(async () => {
