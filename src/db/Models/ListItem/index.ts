@@ -7,7 +7,7 @@ const ListItem = new Schema<IListItem>({
         ref: 'List',
         required: true
     },
-    productId: {
+    product: {
         type: Schema.Types.ObjectId,
         ref: 'UserProduct',
         required: true

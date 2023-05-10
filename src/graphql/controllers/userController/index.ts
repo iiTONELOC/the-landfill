@@ -1,7 +1,6 @@
 import 'dotenv/config';
-import { Types } from 'mongoose';
 import { GraphQLError } from 'graphql';
-import User from '../../../db/Models/User';
+import { User, List, ListItem } from '../../../db/Models';
 import { signToken } from '../../../auth/jwtMiddleware';
 import authenticatedUser from '../../../auth/isAuthenticated';
 import { AuthenticatedContext, IUser, UserModel } from '../../../types';
@@ -12,13 +11,8 @@ const INCORRECT_CREDENTIALS = 'Incorrect credentials';
 export const userQueries = {
     queryMe:
         async function queryMe(_: any, __: any, context: AuthenticatedContext): Promise<Partial<UserModel> | GraphQLError> {
-            if (!context.user) {
-                throw new GraphQLError('Not authenticated');
-            }
-
-            // verify that the user exists in the database
-            await authenticatedUser(context.user._id);
-            const user = (await User.findById(context.user._id).select('-password'))?.toObject() as UserModel;//NOSONAR
+            await authenticatedUser(context.user as UserModel);
+            const user = (await User.findById(context?.user?._id).select('-password'))?.toObject() as UserModel;//NOSONAR
             if (user) {
                 return user;
             }
@@ -84,11 +78,11 @@ export const userMutations = {
     updateUser:
         async function updateUser(_: any, args: { username?: string, email?: string }, { user }: AuthenticatedContext) {
             //see if the user is authenticated
-            await authenticatedUser(user?._id as Types.ObjectId);
+            await authenticatedUser(user as UserModel);
 
             try {
                 // update the user with the args
-                const updated = await User.findByIdAndUpdate(user?._id as Types.ObjectId,//NOSONAR
+                const updated = await User.findByIdAndUpdate(user as UserModel,//NOSONAR
                     args, { new: true, runValidators: true });
                 return updated?.toObject() as UserModel;
             } catch (error) {
@@ -102,11 +96,20 @@ export const userMutations = {
     deleteUser:
         async function deleteUser(_: any, __: any, { user }: AuthenticatedContext) {
             //see if the user is authenticated - throws an error if not
-            await authenticatedUser(user?._id as Types.ObjectId);
+            await authenticatedUser(user as UserModel);
 
             try {
                 // delete the user
-                const deleted = await User.findByIdAndDelete(user?._id as Types.ObjectId);//NOSONAR
+                const deleted = await User.findByIdAndDelete(user as UserModel).populate('lists');//NOSONAR
+
+                // delete the user's lists
+                await List.deleteMany({ _id: { $in: deleted?.lists?.map(el => el?._id) } }); //NOSONAR
+
+                // delete list items associated with deleted lists
+                await ListItem.deleteMany({ listId: { $in: deleted?.lists?.map(el => el?._id) } }); //NOSONAR
+
+                // 
+
                 return deleted?.toObject() as UserModel;
             } catch (error) {
                 throw new GraphQLError('Error deleting user');

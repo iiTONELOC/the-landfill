@@ -39,8 +39,8 @@ const ListSchema = new Schema<IList>({
 });
 
 ListSchema.virtual('productCount').get(function (this: IList) {
-    const products = this?.products || [];
-    return products.length;
+    const products = this?.products !== null ? this?.products : [];
+    return products.length || 0;
 });
 
 export default model<IList>('List', ListSchema);

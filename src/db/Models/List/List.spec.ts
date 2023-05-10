@@ -96,6 +96,10 @@ describe('List Model', () => {
 
             const newList: ListModel = await List.create(testListData);
 
+            // add the newList to the User's lists
+
+            const updatedUser = await User.findByIdAndUpdate(newUser._id, { $push: { lists: newList._id } }, { new: true }) as UserModel;
+
             // create a new listItem with the userProduct and list information
             const testListItemData: IListItem = {
                 listId: newList._id,
@@ -106,6 +110,10 @@ describe('List Model', () => {
             const newListItem: ListItemModel = await ListItem.create(testListItemData);
 
             const updatedList: ListModel | null = await List.findByIdAndUpdate(newList._id, { $push: { products: newListItem._id } }, { new: true }).populate('products') as ListModel;
+
+
+            expect(updatedUser).toBeDefined();
+            expect(updatedUser.lists).toHaveLength(1);
 
             expect(updatedList).toBeDefined();
             expect(updatedList.name).toBe(testListData.name);
@@ -118,6 +126,6 @@ describe('List Model', () => {
             console.error(err);
         }
 
-        expect.assertions(6);
+        expect.assertions(8);
     });
 });

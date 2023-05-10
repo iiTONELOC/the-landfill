@@ -56,7 +56,12 @@ const UserSchema = new Schema<IUser, IUserModel, IUserMethods>({
         type: String,
         default: UserRoles.BASIC,
         enum: UserRoles
-    }
+    },
+    lists: [{
+        type: Schema.Types.ObjectId,
+        ref: 'List',
+        required: false
+    }]
     // When the model is created we need to reference the user's lists
 }, {
     id: false,

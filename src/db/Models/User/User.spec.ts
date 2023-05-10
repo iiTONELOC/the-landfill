@@ -89,11 +89,11 @@ describe('User Model', () => {
             expect(user).toHaveProperty('username', currentUserTestData.username);
             expect(user).toHaveProperty('email', currentUserTestData.email);
             expect(user).toHaveProperty('role', currentUserTestData.role);
-
+            expect(user).toHaveProperty('lists', []);
             index++;
         }
 
-        expect.assertions(7 * testUsers.length);
+        expect.assertions(8 * testUsers.length);
     });
 
     /**

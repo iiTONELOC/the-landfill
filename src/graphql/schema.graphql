@@ -10,16 +10,24 @@ type List {
   _id: ID!
   userId: ID!
   name: String!
-  products: [UserProduct]
-  productsCount: Int
+  products: [ListItem]
+  isDefault: Boolean!
+  productCount: Int
 }
 
 type UserProduct {
   _id: ID!
-  quantity: Int!
-  notes: String
   productData: Product!
   productAlias: String
+}
+
+type ListItem {
+  _id: ID!
+  listId: ID!
+  product: UserProduct
+  username: String!
+  notes: String
+  quantity: Int!
   isCompleted: Boolean!
 }
 
@@ -43,51 +51,36 @@ type Auth {
 
 type Query {
   me: User
-  # users: [User]
-  # user(username: String!): User
-  # lists: [List]
   list(listId: ID!): List
-  products: [Product]
-  product(productId: ID!): Product
-  # sources: [Source]
-  # source(sourceId: ID!): Source
-  # userProducts: [UserProduct]
-  userProduct(userProductId: ID!): UserProduct
+  myLists: [List]
+  listItem(listItemId: ID!): ListItem
 }
 
 type Mutation {
   loginUser(email: String!, password: String!): Auth
   addUser(username: String!, email: String!, password: String!): Auth
   updateUser(username: String, email: String): User
-  deleteUser(userId: ID!): User
+  deleteUser: User
   addList(name: String!): List
-  # addProduct(name: String!, barcode: [String!], source: ID!): Product
-  # addSource(name: String!, urlToSearchResult: String): Source
-  addUserProduct(
-    quantity: Int!
-    notes: String
-    productData: ID!
-    productAlias: String
-    isCompleted: Boolean!
-  ): UserProduct
+  updateList(listId: ID!, name: String, isDefault: Boolean): List
+  removeList(listId: ID!): List
   updateUserProduct(
     userProductId: ID!
-    quantity: Int!
-    notes: String
-    productData: ID!
+    userId: ID!
     productAlias: String
-    isCompleted: Boolean!
   ): UserProduct
-  removeUserProduct(userProductId: ID!): UserProduct
-  updateList(listId: ID!, name: String!): List
-  removeList(listId: ID!): List
-  # updateProduct(
-  #   productId: ID!
-  #   name: String!
-  #   barcode: [String!]
-  #   source: ID!
-  # ): Product
-  # removeProduct(productId: ID!): Product
-  # updateSource(sourceId: ID!, name: String!, urlToSearchResult: String): Source
-  removeSource(sourceId: ID!): Source
+  addToList(
+    listId: ID!
+    barcode: String!
+    notes: String
+    quantity: Int!
+    isCompleted: Boolean!
+  ): ListItem
+  updateListItem(
+    listItemId: ID!
+    notes: String
+    quantity: Int
+    isCompleted: Boolean
+  ): ListItem
+  removeFromList(listItemId: ID!, listId: ID!): ListItem
 }

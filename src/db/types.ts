@@ -8,6 +8,7 @@ export interface IUser {
     email: string;
     password: string;
     role?: UserRoles;
+    lists?: Types.ObjectId[];
 }
 
 export interface IUserMethods {
@@ -35,7 +36,7 @@ export interface ISource {
 
 export enum AvailableSources {
     BARCODE_INDEX = 'barcodeIndex',
-    UPC_ITEM_DB = 'upcItemDB',
+    UPC_ITEM_DB = 'upcItemDb',
     BARCODE_SPIDER = 'barcodeSpider',
     USER_PROVIDED = 'userProvided'
 }
@@ -68,7 +69,7 @@ export interface IList {
 
 export interface IListItem {
     listId: Types.ObjectId;
-    productId: Types.ObjectId;
+    product: Types.ObjectId;
     username: string;
     quantity?: number;
     notes?: string;

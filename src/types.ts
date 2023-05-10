@@ -21,6 +21,8 @@ export type {
 
 export type { IJwtPayload };
 
+
+
 export type {
     IBarcodeLookupResult,
     IxPathLookUpResult,
@@ -30,3 +32,9 @@ export type {
 export interface AuthenticatedContext {
     user: IJwtPayload | undefined;
 }
+
+
+export type {
+    addUserProductMutationArgs,
+    editUserProductMutationArgs
+} from './graphql/controllers/types';

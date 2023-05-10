@@ -1,10 +1,10 @@
 import 'dotenv/config';
 import { GraphQLError } from 'graphql';
-import { addUserProductMutationArgs } from '../types';
 import { barcodeSearch } from '../../../barcodeSearch';
-import { UserProduct, Product, Source } from '../../../db/Models';
 import authenticatedUser from '../../../auth/isAuthenticated';
-import { AuthenticatedContext, UserProductModel, ProductModel, IBarcodeLookupResult, SourceModel } from '../../../types';
+import { UserProduct, Product, Source } from '../../../db/Models';
+import { addUserProductMutationArgs, editUserProductMutationArgs } from '../types';
+import { AuthenticatedContext, UserProductModel, ProductModel, IBarcodeLookupResult, SourceModel, UserModel } from '../../../types';
 
 
 
@@ -13,11 +13,7 @@ export const userProductQueries = {
 
 export const userProductMutations = {
     addUserProduct: async (_: any, { userId, barcode }: addUserProductMutationArgs, { user }: AuthenticatedContext) => {
-        if (!user) {
-            throw new GraphQLError('You must be logged in to add a product to your list.');
-        }
-        // check if the user is authenticated
-        await authenticatedUser(user._id);
+        await authenticatedUser(user as UserModel);
 
         // tracks product information from our database
         let product: ProductModel | null = null;
@@ -89,6 +85,23 @@ export const userProductMutations = {
 
         return requestedProduct;
     },
+    updateUserProduct: async (_: any, { userId, userProductId, productAlias }: editUserProductMutationArgs, { user }: AuthenticatedContext) => {
+        await authenticatedUser(user as UserModel);
+
+        // Look for the userProduct in the database by barcode and userId
+        const updatedProduct = await UserProduct.findOneAndUpdate({ //NOSONAR
+            userId, _id: userProductId
+        }, { productAlias }, { new: true, runValidators: true })
+            .select('-__v')
+            .populate({ path: 'productData', select: '-__v -source' });
+
+        if (!updatedProduct) {
+            throw new GraphQLError('Error updating user product.');
+        }
+
+        return updatedProduct;
+    }
+
 };
 
 export const userProductController = {
