@@ -26,4 +26,13 @@ export type updateListItemArgs = {
     quantity?: number;
     notes?: string;
     isCompleted?: boolean;
-}
+};
+
+export type removeFromListArgs = {
+    listId: Types.ObjectId;
+    productId: Types.ObjectId;
+};
+
+export type addToDefaultListArgs = {
+    barcode: string;
+};

@@ -20,6 +20,7 @@ export const resolvers = {
         removeList: listMutations.deleteList,
         addToList: listMutations.addToList,
         removeFromList: listMutations.removeFromList,
-        updateListItem: listItemMutations.updateListItem
+        updateListItem: listItemMutations.updateListItem,
+        addItemToDefaultList: listMutations.addItemToDefaultList
     }
 };

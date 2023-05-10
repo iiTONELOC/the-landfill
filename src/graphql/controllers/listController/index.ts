@@ -1,13 +1,23 @@
 import 'dotenv/config';
 import { Types } from 'mongoose';
 import { GraphQLError } from 'graphql';
-import { AuthenticatedContext, ListItemModel, ListModel, UserModel } from '../../../types';
 import { List, ListItem, User } from '../../../db/Models';
 import authenticatedUser from '../../../auth/isAuthenticated';
 import { userProductMutations } from '../userProductController';
+import { addToDefaultListArgs, removeFromListArgs } from '../types';
+import { AuthenticatedContext, ListItemModel, ListModel, UserModel } from '../../../types';
 
 
-
+const enforceDefaultList = async (isDefault: boolean, userId?: Types.ObjectId, listId?: Types.ObjectId) => {
+    if (isDefault) {
+        await List.updateMany({ userId, _id: { $ne: listId } }, { isDefault: false })
+            .where('isDefault')
+            .equals(true)
+            .catch((_: Error) => {
+                throw new GraphQLError('Error updating lists.');
+            });
+    }
+};
 
 export const listQueries = {
     // searches for the context user's lists
@@ -57,6 +67,10 @@ export const listMutations = {
                 throw new GraphQLError('Error creating list.');
             });
 
+            // ensures there is only one default list at a time
+            enforceDefaultList(isDefault, user?._id, createdList._id);
+
+
             // add the created list to the user's lists
             await User.findByIdAndUpdate(user?._id, { $push: { lists: createdList._id } }).catch((_: Error) => {
                 // delete the list if it fails to add to the user
@@ -74,8 +88,6 @@ export const listMutations = {
                 });
 
             return populatedList;
-
-
         },
     // can only update the name and isDefault
     updateList:
@@ -95,6 +107,9 @@ export const listMutations = {
                 .catch((_: Error) => {
                     throw new GraphQLError('Error updating list.');
                 });
+
+            // ensures there is only one default list at a time
+            enforceDefaultList(isDefault, user?._id, listId);
 
             return updatedList;
         },
@@ -136,13 +151,17 @@ export const listMutations = {
                 throw new GraphQLError('List not found.');
             }
 
+            // check if the product is already in the user's products
             const product = await userProductMutations
                 .addUserProduct(_, { barcode, userId: user._id }, { user }).catch((_: Error) => {
+                    console.log('Error adding product to user.');
+                    console.log(_);
                     throw new GraphQLError('Error adding product to user.');
                 });
 
-            // check and see if the product is already in the list, if it is we need to update the ListItem's quantity
-            const listItem = await ListItem.findOne({ listId, productId: product?._id })
+            // check and see if the item is already in the list, if it is we need to update the ListItem's quantity
+            const listItem = await ListItem.findOne({ listId })
+                .where('product').equals(product?._id)
                 .populate({ path: 'product', select: '-__v -listId -username', populate: { path: 'productData' } })
                 .catch((_: Error) => {
                     throw new GraphQLError('Error searching for list item.');
@@ -158,6 +177,7 @@ export const listMutations = {
 
                 return updatedListItem;
             } else {
+                // no item was found we need to create a new one
                 const createdListItem = await ListItem.create({
                     listId,
                     username: user.username,
@@ -186,7 +206,7 @@ export const listMutations = {
             }
         },
     removeFromList:
-        async (_: any, { listId, productId }: { listId: Types.ObjectId, productId: Types.ObjectId }, { user }: AuthenticatedContext) => {
+        async (_: any, { listId, productId }: removeFromListArgs, { user }: AuthenticatedContext) => {
             await authenticatedUser(user as UserModel);
 
             const list = await List.findById(listId).catch((_: Error) => {
@@ -197,9 +217,12 @@ export const listMutations = {
                 throw new GraphQLError('List not found.');
             }
 
-            const listItem: ListItemModel | null = await ListItem.findOne({ listId, productId }).catch((_: Error) => {
-                throw new GraphQLError('Error searching for list item.');
-            }) as ListItemModel;
+            const listItem: ListItemModel | null = await ListItem.findOne({ listId })
+                .where('product')
+                .equals(productId)
+                .catch((_: Error) => {
+                    throw new GraphQLError('Error searching for list item.');
+                }) as ListItemModel;
 
             if (!listItem || listItem.username !== user.username) {
                 throw new GraphQLError('List item not found.');
@@ -221,8 +244,31 @@ export const listMutations = {
                     .catch((_: Error) => {
                         throw new GraphQLError('Error deleting list item.');
                     });
+
                 return deletedListItem;
             }
+        },
+    // meant to be used by the trashScan device not the user or an app
+    addItemToDefaultList:
+        async (_: any, { barcode }: addToDefaultListArgs, { user }: AuthenticatedContext) => {
+            await authenticatedUser(user as UserModel);
+
+            // look for a user's default list
+            let defaultList: ListModel | null = await List.findOne({ userId: user?._id })
+                .where('isDefault')
+                .equals(true)
+                .catch((_: Error) => {
+                    throw new GraphQLError('Error searching for default list.');
+                }) as ListModel;
+
+            if (!defaultList) {
+                // create a default list for the user
+                defaultList = await listMutations.createList(_, { name: 'Default', isDefault: true }, { user });
+            }
+
+            // add the item to the default list
+            const createdListItem = await listMutations.addToList(_, { listId: defaultList?._id as Types.ObjectId, barcode }, { user });
+            return createdListItem;
         }
 };
 

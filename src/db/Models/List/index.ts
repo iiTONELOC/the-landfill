@@ -1,5 +1,7 @@
+import ListItem from '../ListItem';
 import { Schema, model } from 'mongoose';
-import { IList } from '../../types';
+import { IList, ListItemModel } from '../../types';
+
 
 const ListSchema = new Schema<IList>({
     userId: {
@@ -38,9 +40,17 @@ const ListSchema = new Schema<IList>({
     }
 });
 
-ListSchema.virtual('productCount').get(function (this: IList) {
+ListSchema.virtual('productCount').get(async function (this: IList) {
+    return this?.products?.length || 0;
+});
+ListSchema.virtual('itemCount').get(async function (this: IList) {
     const products = this?.products !== null ? this?.products : [];
-    return products.length || 0;
+    let quantity = 0;
+    for (const element of products) {
+        const resolvedProduct: ListItemModel | null = await ListItem.findById(element).exec() as ListItemModel;
+        quantity += resolvedProduct?.quantity || 0;
+    }
+    return quantity;
 });
 
 export default model<IList>('List', ListSchema);

@@ -13,6 +13,7 @@ type List {
   products: [ListItem]
   isDefault: Boolean!
   productCount: Int
+  itemCount: Int
 }
 
 type UserProduct {
@@ -61,7 +62,7 @@ type Mutation {
   addUser(username: String!, email: String!, password: String!): Auth
   updateUser(username: String, email: String): User
   deleteUser: User
-  addList(name: String!): List
+  addList(name: String!, isDefault: Boolean): List
   updateList(listId: ID!, name: String, isDefault: Boolean): List
   removeList(listId: ID!): List
   updateUserProduct(
@@ -83,4 +84,10 @@ type Mutation {
     isCompleted: Boolean
   ): ListItem
   removeFromList(listItemId: ID!, listId: ID!): ListItem
+  addItemToDefaultList(
+    barcode: String!
+    notes: String
+    quantity: Int
+    isCompleted: Boolean
+  ): ListItem
 }
