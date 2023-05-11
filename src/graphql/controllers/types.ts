@@ -7,7 +7,6 @@ export type addUserProductMutationArgs = {
 
 export type editUserProductMutationArgs = {
     userProductId: Types.ObjectId;
-    userId: Types.ObjectId;
     productAlias?: string;
 };
 
@@ -30,7 +29,7 @@ export type updateListItemArgs = {
 
 export type removeFromListArgs = {
     listId: Types.ObjectId;
-    productId: Types.ObjectId;
+    listItemId: Types.ObjectId;
 };
 
 export type addToDefaultListArgs = {

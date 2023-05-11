@@ -1,8 +1,10 @@
-import { userController, listController, listItemController } from '../controllers';
+import { userController, listController, listItemController, userProductController } from '../controllers';
 
 const { userQueries, userMutations } = userController;
 const { listQueries, listMutations } = listController;
+const { userProductMutations } = userProductController;
 const { listItemQueries, listItemMutations } = listItemController;
+
 export const resolvers = {
     Query: {
         me: userQueries.queryMe,
@@ -21,6 +23,7 @@ export const resolvers = {
         addToList: listMutations.addToList,
         removeFromList: listMutations.removeFromList,
         updateListItem: listItemMutations.updateListItem,
-        addItemToDefaultList: listMutations.addItemToDefaultList
+        addItemToDefaultList: listMutations.addItemToDefaultList,
+        updateUserProduct: userProductMutations.updateUserProduct,
     }
 };

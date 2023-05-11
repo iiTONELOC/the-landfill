@@ -12,7 +12,7 @@ export const userQueries = {
     queryMe:
         async function queryMe(_: any, __: any, context: AuthenticatedContext): Promise<Partial<UserModel> | GraphQLError> {
             await authenticatedUser(context.user as UserModel);
-            const user = (await User.findById(context?.user?._id).select('-password'))?.toObject() as UserModel;//NOSONAR
+            const user = (await User.findById(context?.user?._id).select('-password').populate('lists'))?.toObject() as UserModel;//NOSONAR
             if (user) {
                 return user;
             }
@@ -48,9 +48,9 @@ export const userMutations = {
             }
         },
     loginUser:
-        async function loginUser(_: any, { email, password }: IUser) {
+        async function loginUser(_: any, { username, password }: IUser) {
             try {
-                const user = (await User.findOne({ email }));//NOSONAR
+                const user = (await User.findOne({ username }));//NOSONAR
                 if (!user) {
                     throw new GraphQLError(INCORRECT_CREDENTIALS);
                 }

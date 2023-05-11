@@ -91,15 +91,17 @@ export const userProductMutations = {
 
         return requestedProduct;
     },
-    updateUserProduct: async (_: any, { userId, userProductId, productAlias }: editUserProductMutationArgs, { user }: AuthenticatedContext) => {
+    updateUserProduct: async (_: any, { userProductId, productAlias }: editUserProductMutationArgs, { user }: AuthenticatedContext) => {
         await authenticatedUser(user as UserModel);
 
         // Look for the userProduct in the database by barcode and userId
         const updatedProduct = await UserProduct.findOneAndUpdate({ //NOSONAR
-            userId, _id: userProductId
+            _id: userProductId, userId: user?._id
         }, { productAlias }, { new: true, runValidators: true })
             .select('-__v')
-            .populate({ path: 'productData', select: '-__v -source' });
+            .populate({ path: 'productData', select: '-__v -source' }).catch((err: Error) => {
+                throw new GraphQLError(err.message);
+            });
 
         if (!updatedProduct) {
             throw new GraphQLError('Error updating user product.');

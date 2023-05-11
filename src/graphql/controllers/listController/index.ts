@@ -206,7 +206,7 @@ export const listMutations = {
             }
         },
     removeFromList:
-        async (_: any, { listId, productId }: removeFromListArgs, { user }: AuthenticatedContext) => {
+        async (_: any, { listId, listItemId }: removeFromListArgs, { user }: AuthenticatedContext) => {
             await authenticatedUser(user as UserModel);
 
             const list = await List.findById(listId).catch((_: Error) => {
@@ -217,14 +217,12 @@ export const listMutations = {
                 throw new GraphQLError('List not found.');
             }
 
-            const listItem: ListItemModel | null = await ListItem.findOne({ listId })
-                .where('product')
-                .equals(productId)
+            const listItem: ListItemModel | null = await ListItem.findById(listItemId)
                 .catch((_: Error) => {
                     throw new GraphQLError('Error searching for list item.');
                 }) as ListItemModel;
 
-            if (!listItem || listItem.username !== user.username) {
+            if (!listItem /*|| listItem.username !== user.username*/) {
                 throw new GraphQLError('List item not found.');
             }
 
