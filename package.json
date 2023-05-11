@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon src/app.ts",
-    "build": "npm run lint && rimraf lib/ && tsc",
+    "build": "npm run lint && rimraf lib/ && tsc && copy src/graphql/schema.graphql lib/graphql",
     "start": "node lib/app.js",
     "test": "jest ",
     "lint": "eslint src/**/*.ts",

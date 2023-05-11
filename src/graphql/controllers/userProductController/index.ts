@@ -47,10 +47,10 @@ export const userProductMutations = {
 
             // if the data is null that means that the barcodeSearch module did not find any data
 
-            const sourceName = barcodeSearchData?.source?.name || 'User Added';
+            const sourceName = barcodeSearchData?.source?.name || 'userProvided';
             const url: string | undefined = barcodeSearchData?.source?.url || undefined;
             const name: string | undefined = barcodeSearchData?.itemName || 'Product not found';
-            const _barcode: string | undefined = barcodeSearchData?.itemBarcode || undefined;
+            const _barcode: string | undefined = barcodeSearchData?.itemBarcode || barcode;
 
 
             // lookup the source
@@ -62,6 +62,7 @@ export const userProductMutations = {
             // if the source exists, use it, otherwise create a new source
             if (!source) {
                 source = await Source.create({ name: sourceName, urlToSearchResult: url }).catch(_ => {
+                    console.log('Error creating a source for a user product.');
                     throw new GraphQLError('Error creating a source for a user product.');
                 });
             }
