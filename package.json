@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon src/app.ts",
-    "build": "node build.mjs",
+    "build": "npm run lint && rimraf ./lib && tsc && node build.mjs",
     "start": "node lib/app.js",
     "test": "jest ",
     "lint": "eslint src/**/*.ts",
