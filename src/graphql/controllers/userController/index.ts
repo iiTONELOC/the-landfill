@@ -71,7 +71,6 @@ export const userMutations = {
                     throw new GraphQLError(INCORRECT_CREDENTIALS);
 
                 } else {
-                    console.error(error);
                     throw new GraphQLError('Error logging in user');
                 }
             }
