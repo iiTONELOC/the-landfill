@@ -72,8 +72,6 @@ const UserSchema = new Schema<IUser, IUserModel, IUserMethods>({
         required: true,
         default: false
     },
-
-    // When the model is created we need to reference the user's lists
 }, {
     id: false,
     timestamps: true

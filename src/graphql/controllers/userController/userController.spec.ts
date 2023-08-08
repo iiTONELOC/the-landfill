@@ -12,7 +12,8 @@ const testUserData: IUser = {
     email: 'test245@test.com',
     password: 'testPassword1!',
     webAuthnRegistered: false,
-    useWebAuthn: false
+    useWebAuthn: false,
+
 } as IUser;
 
 let testUser: UserModel;
@@ -132,13 +133,13 @@ describe('userQueries', () => {
         });
     });
 
-    describe('loginUser', () => {
+    describe('loginUserDevice', () => {
         it('should be defined', () => {
-            expect(userController.userMutations.loginUser).toBeDefined();
+            expect(userController.userMutations.loginUserDevice).toBeDefined();
         });
 
         it('should be able to login a user', async () => {
-            const result = await userController.userMutations.loginUser(null, testUserData);
+            const result = await userController.userMutations.loginUserDevice(null, testUserData);
             const payload = result?.token ? (await jwt.verify(result.token, process.env.JWT_SECRET as string)) as IJwtPayload : null;
 
             expect(result).toBeDefined();
@@ -161,7 +162,7 @@ describe('userQueries', () => {
 
         it('should throw an error if the user does not exist', async () => {
             try {
-                await userController.userMutations.loginUser(null, {
+                await userController.userMutations.loginUserDevice(null, {
                     username: 'testUser451',
                     email: 'testBananas@test.com',
                     password: 'testPassword1!',
@@ -180,7 +181,7 @@ describe('userQueries', () => {
 
         it('should throw an error if the password is incorrect', async () => {
             try {
-                await userController.userMutations.loginUser(null, {
+                await userController.userMutations.loginUserDevice(null, {
                     username: testUserData.username,
                     email: testUserData.email,
                     password: 'testPassword2!',

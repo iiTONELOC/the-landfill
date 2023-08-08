@@ -66,11 +66,16 @@ type Query {
 }
 
 type Mutation {
-  # TODO: UPDATE the loginUser to take a required API key
+  # TODO: UPDATE the loginUserDevice to take a required API key
   # TODO: ADD a Generate API Key mutation and create the necessary models and resolvers
-  loginUser(username: String!, password: String!): Auth
+  loginUserDevice(
+    username: String!
+    password: String!
+    deviceKey: String!
+  ): Auth
   addUser(username: String!, email: String!, password: String!): Auth
   updateUser(username: String, email: String): User
+  generateDeviceKey: String
   deleteUser: User
   addList(name: String!, isDefault: Boolean): List
   updateList(listId: ID!, name: String, isDefault: Boolean): List

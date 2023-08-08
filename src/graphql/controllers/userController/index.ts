@@ -1,8 +1,9 @@
 import 'dotenv/config';
+import { v4 as uuidv4 } from 'uuid';
 import { GraphQLError } from 'graphql';
-import { User, List, ListItem } from '../../../db/Models';
 import { signToken } from '../../../auth/jwtMiddleware';
 import authenticatedUser from '../../../auth/isAuthenticated';
+import { User, List, ListItem, DeviceKey } from '../../../db/Models';
 import { AuthenticatedContext, IUser, UserModel } from '../../../types';
 
 const INCORRECT_CREDENTIALS = 'Incorrect credentials';
@@ -47,44 +48,20 @@ export const userMutations = {
                 }
             }
         },
-    addUserWebAuthn: // NOSONAR
-        // eslint-disable-next-line
-        async function addUserWebAuthn(_: any, { username, email }: IUser, __: AuthenticatedContext) {
-            try {
-                const user: UserModel | null = ((await User.create({
-                    username,
-                    email,
-                    useWebAuthn: true,
-                    webAuthnRegistered: false
-                }))).toObject() as UserModel;
-                if (user) {
-                    const token = signToken(user);
-                    if (token) {
-                        return { user, token };
-                    } else {
-                        throw new GraphQLError('Error creating authentication token!');
-                    }
-                }
-            } catch (error) {
-                // check for certain errors like duplicate user or password requirements
-                if (error?.toString().includes('E11000 duplicate key error')) {
-                    throw new GraphQLError('User already exists');
-                } else {
-                    throw new GraphQLError('Error creating user');
-                }
-            }
-        },
-    loginUser:
-        async function loginUser(_: any, { username, password }: IUser) {
+    loginUserDevice:
+        async function loginUserDevice(_: any, { username, password, deviceKey }: { username: string, password: string, deviceKey: string }) {
             try {
                 const user = (await User.findOne({ username }));//NOSONAR
                 if (!user) {
                     throw new GraphQLError(INCORRECT_CREDENTIALS);
                 }
 
+                // look up a device key for the user - only one key is registered at a time
+                const userDeviceKey = await DeviceKey.findOne({ userId: user?._id });//NOSONAR
+                const validDeviceKey = await userDeviceKey?.isCorrectKey(deviceKey);
                 const validPassword = await user.isCorrectPassword(password);
 
-                if (!validPassword) {
+                if (!validPassword || !validDeviceKey) {
                     throw new GraphQLError(INCORRECT_CREDENTIALS);
                 }
 
@@ -140,6 +117,25 @@ export const userMutations = {
                 return deleted?.toObject() as UserModel;
             } catch (error) {
                 throw new GraphQLError('Error deleting user');
+            }
+        },
+    generateDeviceKey:
+        async function generateDeviceKey(_: any, __: any, { user }: AuthenticatedContext) {
+            //see if the user is authenticated - throws an error if not
+            await authenticatedUser(user as UserModel);
+
+            try {
+                // generate a UUID v4 for the device key
+                const deviceKey: string = uuidv4();
+                // create a device key for the user
+                const newDevice = await DeviceKey.create({ userId: user?._id, key: deviceKey });
+
+                // delete any other device keys for the this user
+                await DeviceKey.deleteMany({ userId: user?._id, _id: { $ne: newDevice?._id } }); //NOSONAR
+
+                return deviceKey;
+            } catch (error) {
+                throw new GraphQLError('Error generating device key');
             }
         }
 };
