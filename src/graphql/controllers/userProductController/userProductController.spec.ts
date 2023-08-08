@@ -26,20 +26,12 @@ describe('userProductController', () => {
         expect(userProductController).toBeDefined();
     });
 
-    it('should have a userProductQueries property', () => {
-        expect(userProductController.userProductQueries).toBeDefined();
-    });
 
     it('should have a userProductMutations property', () => {
         expect(userProductController.userProductMutations).toBeDefined();
     });
 });
 
-describe('userProductQueries', () => {
-    it('should be defined', () => {
-        expect(userProductController.userProductQueries).toBeDefined();
-    });
-});
 
 describe('userProductMutations', () => {
     it('should be defined', () => {

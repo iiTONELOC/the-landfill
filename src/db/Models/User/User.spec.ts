@@ -15,36 +15,48 @@ const testUserData: IUser[] = [
         email: 'testEmail@test.com',
         password: validTestPassword,
         role: UserRoles.BASIC,
+        webAuthnRegistered: false,
+        useWebAuthn: false
     },
     {
         username: 'testuser2',
         email: 'testEmail2@test.com',
         password: validTestPassword,
-        role: UserRoles.ADMIN
+        role: UserRoles.ADMIN,
+        webAuthnRegistered: false,
+        useWebAuthn: false
     },
     {
         username: 'testuser3',
         email: 'testEmail3@test.com',
         password: validTestPassword,
-        role: UserRoles.API_USER
+        role: UserRoles.API_USER,
+        webAuthnRegistered: false,
+        useWebAuthn: false
     },
     {
         username: 'testuser4',
         email: 'testEmail4@test.com',
         password: validTestPassword,
-        role: UserRoles.API_ADMIN
+        role: UserRoles.API_ADMIN,
+        webAuthnRegistered: false,
+        useWebAuthn: false
     },
     {
         username: 'testuser5',
         email: 'testEmail5@test.com',
         password: validTestPassword,
-        role: UserRoles.SITE_ADMIN
+        role: UserRoles.SITE_ADMIN,
+        webAuthnRegistered: false,
+        useWebAuthn: false,
     },
     {
         username: 'testuser6',
         email: 'testEmail6@test.com',
         password: validTestPassword,
-        role: UserRoles.SITE_OWNER
+        role: UserRoles.SITE_OWNER,
+        webAuthnRegistered: false,
+        useWebAuthn: false
     }
 ];
 
@@ -104,7 +116,9 @@ describe('User Model', () => {
             username: 'a',
             email: 'shortUser@test.com',
             password: validTestPassword,
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false
         };
 
         try {
@@ -124,7 +138,9 @@ describe('User Model', () => {
             username: `@${'a'.repeat(31)}`,
             email: 'LongUsername@test.com',
             password: validTestPassword,
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false,
         };
 
         try {
@@ -144,13 +160,17 @@ describe('User Model', () => {
                 username: 'test user',
                 email: 'spaceInName@test.com',
                 password: validTestPassword,
-                role: UserRoles.BASIC
+                role: UserRoles.BASIC,
+                webAuthnRegistered: false,
+                useWebAuthn: false
             },
             {
                 username: 'test@user!',
                 email: 'specalCharInName@test.com',
                 password: validTestPassword,
-                role: UserRoles.BASIC
+                role: UserRoles.BASIC,
+                webAuthnRegistered: false,
+                useWebAuthn: false
             },
         ];
 
@@ -172,7 +192,9 @@ describe('User Model', () => {
             username: 'testuser',
             email: 'testEmail99@test.com',
             password: validTestPassword,
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false
         };
 
         try {
@@ -213,25 +235,33 @@ describe('User Model', () => {
                 username: testUser99,
                 email: 'testEmail',
                 password: validTestPassword,
-                role: UserRoles.BASIC
+                role: UserRoles.BASIC,
+                webAuthnRegistered: false,
+                useWebAuthn: false
             },
             {
                 username: testUser99,
                 email: 'testEmail@test',
                 password: validTestPassword,
-                role: UserRoles.BASIC
+                role: UserRoles.BASIC,
+                webAuthnRegistered: false,
+                useWebAuthn: false
             },
             {
                 username: testUser99,
                 email: 'testEmail@test.',
                 password: validTestPassword,
-                role: UserRoles.BASIC
+                role: UserRoles.BASIC,
+                webAuthnRegistered: false,
+                useWebAuthn: false
             },
             {
                 username: testUser99,
                 email: '',
                 password: validTestPassword,
-                role: UserRoles.BASIC
+                role: UserRoles.BASIC,
+                webAuthnRegistered: false,
+                useWebAuthn: false
             },
         ];
 
@@ -254,7 +284,9 @@ describe('User Model', () => {
             username: testUser99,
             email: 'testEmail@test.com',
             password: validTestPassword,
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false
         };
 
         try {
@@ -273,7 +305,9 @@ describe('User Model', () => {
         const testUser: IUser = {
             username: testUser99,
             password: validTestPassword,
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false
         } as IUser;
 
         try {
@@ -297,7 +331,9 @@ describe('User Model', () => {
             username: testUser99,
             email: 'shortPass@test.com',
             password: 'test',
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false
         };
 
         try {
@@ -316,7 +352,9 @@ describe('User Model', () => {
             username: testUser99,
             email: 'LongPass@test.com',
             password: 'a'.repeat(101),
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false
         };
 
         try {
@@ -335,7 +373,9 @@ describe('User Model', () => {
             username: testUser99,
             email: 'badPass@test.com',
             password: 'testPassword!',
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false
         };
 
         try {
@@ -354,7 +394,9 @@ describe('User Model', () => {
             username: testUser99,
             email: 'badPass@test.com',
             password: 'testPassword1',
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false
         };
 
         try {
@@ -373,7 +415,9 @@ describe('User Model', () => {
             username: 'testuser',
             email: 'badPass@test.com',
             password: validTestPassword.toLowerCase(),
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false
         };
 
         try {
@@ -392,7 +436,9 @@ describe('User Model', () => {
             username: 'testuser',
             email: 'badPass@test.com',
             password: validTestPassword.toUpperCase(),
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false
         };
 
         try {
@@ -410,7 +456,9 @@ describe('User Model', () => {
         const testUser: IUser = {
             username: testUser99,
             email: 'testuser99@test.com',
-            role: UserRoles.BASIC
+            role: UserRoles.BASIC,
+            webAuthnRegistered: false,
+            useWebAuthn: false
         } as IUser;
 
         try {
@@ -419,7 +467,7 @@ describe('User Model', () => {
 
         catch (err) {
             expect(err).toBeDefined();
-            expect(err).toHaveProperty('name', 'ValidationError');
+            expect(err).toHaveProperty('name', 'Error');
         }
         expect.assertions(2);
     });

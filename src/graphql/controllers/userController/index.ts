@@ -47,6 +47,33 @@ export const userMutations = {
                 }
             }
         },
+    addUserWebAuthn: // NOSONAR
+        // eslint-disable-next-line
+        async function addUserWebAuthn(_: any, { username, email }: IUser, __: AuthenticatedContext) {
+            try {
+                const user: UserModel | null = ((await User.create({
+                    username,
+                    email,
+                    useWebAuthn: true,
+                    webAuthnRegistered: false
+                }))).toObject() as UserModel;
+                if (user) {
+                    const token = signToken(user);
+                    if (token) {
+                        return { user, token };
+                    } else {
+                        throw new GraphQLError('Error creating authentication token!');
+                    }
+                }
+            } catch (error) {
+                // check for certain errors like duplicate user or password requirements
+                if (error?.toString().includes('E11000 duplicate key error')) {
+                    throw new GraphQLError('User already exists');
+                } else {
+                    throw new GraphQLError('Error creating user');
+                }
+            }
+        },
     loginUser:
         async function loginUser(_: any, { username, password }: IUser) {
             try {

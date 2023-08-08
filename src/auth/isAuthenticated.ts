@@ -12,9 +12,7 @@ export default async function authenticatedUser(user: UserModel | null): Promise
     if (!user) {
         throw new GraphQLError('You must be logged in!');
     }
-    const _user: UserModel | null = await User.findById(user._id).catch((_: Error) => {
-        return null;
-    });
+    const _user: UserModel | null = await User.findById(user._id).catch((_: Error) => null);
 
     if (_user) {
         return true;

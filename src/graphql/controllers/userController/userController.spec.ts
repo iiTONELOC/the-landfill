@@ -11,6 +11,8 @@ const testUserData: IUser = {
     username: 'testUser245',
     email: 'test245@test.com',
     password: 'testPassword1!',
+    webAuthnRegistered: false,
+    useWebAuthn: false
 } as IUser;
 
 let testUser: UserModel;
@@ -105,7 +107,9 @@ describe('userQueries', () => {
             const result = await userController.userMutations.addUser(null, {
                 username: 'testUser246',
                 email: 'testUser246@test.com',
-                password: 'testPassword1!'
+                password: 'testPassword1!',
+                webAuthnRegistered: false,
+                useWebAuthn: false
             }, {} as AuthenticatedContext);
 
             expect(result).toBeDefined();
@@ -160,7 +164,9 @@ describe('userQueries', () => {
                 await userController.userMutations.loginUser(null, {
                     username: 'testUser451',
                     email: 'testBananas@test.com',
-                    password: 'testPassword1!'
+                    password: 'testPassword1!',
+                    webAuthnRegistered: false,
+                    useWebAuthn: false
                 })
             } catch (error) {
                 expect(error).toBeDefined();
@@ -177,7 +183,9 @@ describe('userQueries', () => {
                 await userController.userMutations.loginUser(null, {
                     username: testUserData.username,
                     email: testUserData.email,
-                    password: 'testPassword2!'
+                    password: 'testPassword2!',
+                    webAuthnRegistered: false,
+                    useWebAuthn: false
                 })
             } catch (error) {
                 expect(error).toBeDefined();

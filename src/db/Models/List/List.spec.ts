@@ -45,7 +45,9 @@ const testUserData: IUser = {
     username: 'testUser99',
     email: 'test@test.com',
     password: 'testPassword1!',
-    role: UserRoles.BASIC
+    role: UserRoles.BASIC,
+    webAuthnRegistered: false,
+    useWebAuthn: false
 };
 
 beforeAll(async () => {
@@ -103,7 +105,7 @@ describe('List Model', () => {
             // create a new listItem with the userProduct and list information
             const testListItemData: IListItem = {
                 listId: newList._id,
-                productId: userProduct._id,
+                product: userProduct._id,
                 username: newUser.username,
             };
 
