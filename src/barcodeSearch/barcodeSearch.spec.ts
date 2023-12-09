@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { IBarcodeLookupResult } from './types';
+// import { IBarcodeLookupResult } from './types';
 import { barcodeSearch } from '.';
 
 describe('barcodeSearch', () => {

@@ -13,7 +13,7 @@ export const userQueries = {
     queryMe:
         async function queryMe(_: any, __: any, context: AuthenticatedContext): Promise<Partial<UserModel> | GraphQLError> {
             await authenticatedUser(context.user as UserModel);
-            const user = (await User.findById(context?.user?._id).select('-password').populate('lists'))?.toObject() as UserModel;//NOSONAR
+            const user = (await User.findById(context?.user?._id).select('-password').populate('lists'))?.toObject() as UserModel;
             if (user) {
                 return user;
             }
@@ -104,15 +104,13 @@ export const userMutations = {
 
             try {
                 // delete the user
-                const deleted = await User.findByIdAndDelete(user as UserModel).populate('lists');//NOSONAR
+                const deleted: UserModel = await User.findByIdAndDelete(user as UserModel).populate('lists') as UserModel;
 
                 // delete the user's lists
                 await List.deleteMany({ _id: { $in: deleted?.lists?.map(el => el?._id) } }); //NOSONAR
 
                 // delete list items associated with deleted lists
                 await ListItem.deleteMany({ listId: { $in: deleted?.lists?.map(el => el?._id) } }); //NOSONAR
-
-                // 
 
                 return deleted?.toObject() as UserModel;
             } catch (error) {

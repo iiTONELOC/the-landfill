@@ -7,7 +7,7 @@ const router = Router();
 
 router.get('/attestation/options/:userId', async (req, res) => { //NOSONAR
     try {
-        const _user: UserModel = await User.findById({ _id: req.params.userId }).select('-password -__v'); // NOSONAR
+        const _user: UserModel = await User.findById({ _id: req.params.userId }).select('-password -__v') as UserModel;
         // a user doesn't exist in the database
         if (!_user) {
             return res.status(401).json({ message: 'Unauthorized' });

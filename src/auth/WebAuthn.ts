@@ -46,8 +46,8 @@ export interface IWebAuthnAPI {
 export const webAuthnAPI: IWebAuthnAPI = {
     generateRegistrationOptions: async (forUser: UserModel): Promise<PublicKeyCredentialRequestOptionsJSON> => {
         // list of existing authenticators for this user
-        const userAuthenticators: WebAuthnAuthenticatorModel[] = await WebAuthnAuthenticator //NOSONAR
-            .find({ userId: forUser._id }).select('-__v');
+        const userAuthenticators: WebAuthnAuthenticatorModel[] = await WebAuthnAuthenticator
+            .find({ userId: forUser._id }).select('-__v') as WebAuthnAuthenticatorModel[];
 
         // registration options
         const options: PublicKeyCredentialRequestOptionsJSON = generateRegistrationOptions({
@@ -145,7 +145,7 @@ export const webAuthnAPI: IWebAuthnAPI = {
     generateAuthenticationOptions: async (forUser: UserModel): Promise<WebAuthnAuthenticationOpts> => {
         // find the user's registered authenticators
         const userAuthenticators: WebAuthnAuthenticatorModel[] = await WebAuthnAuthenticator //NOSONAR
-            .find({ userId: forUser._id }).select('-__v');
+            .find({ userId: forUser._id }).select('-__v') as WebAuthnAuthenticatorModel[];
 
         // if the user has no registered authenticators, return an error
         if (userAuthenticators.length === 0) {
@@ -223,7 +223,7 @@ export const webAuthnAPI: IWebAuthnAPI = {
 
         if (verification?.verified) {
             // we need to do some housekeeping here before we send the response
-            const verifiedUser: UserModel = await User.findById(forUserId).select('-password -__v'); //NOSONAR
+            const verifiedUser: UserModel = await User.findById(forUserId).select('-password -__v') as UserModel;
             const authToken = signToken(verifiedUser?.toObject() as UserModel);
 
             // update the authenticator's counter
