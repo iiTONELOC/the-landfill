@@ -6,3 +6,4 @@ lib
 .env-prod
 .vscode
 coverage
+.DS_Store
