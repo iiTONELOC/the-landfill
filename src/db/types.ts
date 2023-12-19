@@ -9,12 +9,13 @@ export interface IUser {
     password: string;
     role?: UserRoles;
     lists?: Types.ObjectId[];
+    useWebAuthn: boolean;
+    webAuthnRegistered: boolean;
 }
 
 export interface IUserMethods {
     isCorrectPassword: (password: string) => Promise<boolean>;
 }
-
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type IUserModel = Model<IUser, {}, IUserMethods>;
@@ -28,6 +29,37 @@ export enum UserRoles {
     SITE_OWNER = 'site.owner'
 }
 
+// WebAuthn Authenticator
+export interface IWebAuthnAuthenticator {
+    userId: Types.ObjectId;
+    credentialID: string;
+    credentialPublicKey: string;
+    counter: bigint;
+    credentialDeviceType: string;
+    credentialBackedUp: boolean;
+    transports?: string[] | null;
+}
+
+export interface IWebAuthnSession {
+    challenge: string;
+    userId: Types.ObjectId;
+    authenticatorId: Types.ObjectId | null;
+    createdAt: Date;
+}
+
+// Device Access Keys
+export interface IDeviceKey {
+    userId: Types.ObjectId;
+    key: string;
+    createdAt: Date;
+}
+
+export interface IDeviceKeyMethods {
+    isCorrectKey: (key: string) => Promise<boolean>;
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type IDeviceKeyModel = Model<IDeviceKey, {}, IDeviceKeyMethods>;
 // SOURCE
 export interface ISource {
     name: AvailableSources;
@@ -58,7 +90,6 @@ export interface IUserProduct {
 }
 
 
-
 // LIST
 export interface IList {
     userId: Types.ObjectId;
@@ -82,7 +113,10 @@ export type ListModel = HydratedDocument<IList> & IList;
 export type SourceModel = HydratedDocument<ISource> & ISource;
 export type ProductModel = HydratedDocument<IProduct> & IProduct;
 export type ListItemModel = HydratedDocument<IListItem> & IListItem;
+export type DeviceKeyModel = HydratedDocument<IDeviceKey> & IDeviceKey;
 export type UserProductModel = HydratedDocument<IUserProduct> & IUserProduct;
+export type WebAuthnUserSessionModel = HydratedDocument<IWebAuthnSession> & IWebAuthnSession;
+export type WebAuthnAuthenticatorModel = HydratedDocument<IWebAuthnAuthenticator> & IWebAuthnAuthenticator;
 
 
 

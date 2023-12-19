@@ -9,7 +9,7 @@ const testUserProductId: Types.ObjectId = new Types.ObjectId();
 
 const testListItem: IListItem = {
     listId: testListId,
-    productId: testUserProductId,
+    product: testUserProductId,
     username: 'testUser99',
 };
 

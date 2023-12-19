@@ -14,7 +14,7 @@ export const resolvers = {
     },
     Mutation: {
         addUser: userMutations.addUser,
-        loginUser: userMutations.loginUser,
+        loginUserDevice: userMutations.loginUserDevice,
         updateUser: userMutations.updateUser,
         deleteUser: userMutations.deleteUser,
         addList: listMutations.createList,
@@ -23,6 +23,7 @@ export const resolvers = {
         addToList: listMutations.addToList,
         removeFromList: listMutations.removeFromList,
         updateListItem: listItemMutations.updateListItem,
+        generateDeviceKey: userMutations.generateDeviceKey,
         addItemToDefaultList: listMutations.addItemToDefaultList,
         updateUserProduct: userProductMutations.updateUserProduct,
     }

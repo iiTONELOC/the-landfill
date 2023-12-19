@@ -1,13 +1,19 @@
 import { IJwtPayload } from './auth/types';
 
 export type {
+    WebAuthnAuthenticatorModel,
+    WebAuthnUserSessionModel,
+    IWebAuthnAuthenticator,
+    IWebAuthnSession,
     UserProductModel,
     AvailableSources,
+    DeviceKeyModel,
     ListItemModel,
     DBConnection,
     IUserProduct,
     ProductModel,
     SourceModel,
+    IDeviceKey,
     IUserModel,
     IListItem,
     ListModel,
@@ -21,8 +27,6 @@ export type {
 
 export type { IJwtPayload };
 
-
-
 export type {
     IBarcodeLookupResult,
     IxPathLookUpResult,
@@ -32,7 +36,6 @@ export type {
 export interface AuthenticatedContext {
     user: IJwtPayload | undefined;
 }
-
 
 export type {
     addUserProductMutationArgs,

@@ -4,6 +4,7 @@ import cors from 'cors';
 import * as fs from 'fs';
 import * as path from 'path';
 import express from 'express';
+import routes from './routes';
 import bodyParser from 'body-parser';
 import connect from './db/connection';
 import { resolvers } from './graphql/resolvers';
@@ -14,25 +15,24 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
+const PORT = process.env.PORT ?? 3001;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 const startServer = async () => {
     // http and express server
     const app = express();
-    const port = process.env.PORT || 3001;
     const httpServer = http.createServer(app);
-    const isProduction = process.env.NODE_ENV === 'production';
 
-    app.set('port', port);
+    app.set('port', PORT);
     app.disable('x-powered-by');
     app.disable('etag');
-
 
     // apollo server
     const apolloServer = new ApolloServer<AuthenticatedContext>({
         typeDefs: fs.readFileSync(path.join(__dirname, './graphql/schema.graphql'), 'utf8'),
         resolvers,
         plugins: [ApolloServerPluginDrainHttpServer({ httpServer }),
-        isProduction ? ApolloServerPluginLandingPageLocalDefault({ footer: false })
+        IS_PRODUCTION ? ApolloServerPluginLandingPageLocalDefault({ footer: false })
             : undefined].filter(x => x) as any
     });
 
@@ -50,12 +50,15 @@ const startServer = async () => {
         })
     );
 
-    // await successful connection to the database
+    // attach REST endpoints
+    // Currently only used for webauthn 
+    app.use(routes);
 
-    await connect(isProduction ? process.env.DB_URI : process.env.DB_NAME);
+    // await successful connection to the database
+    await connect(IS_PRODUCTION ? process.env.DB_URI : process.env.DB_NAME);
     // start the http server
-    await new Promise<void>(resolve => httpServer.listen({ port }, resolve));
-    !isProduction && console.log(`🚀 Development Server ready at http://localhost:${port}/graphql\n`);//NOSONAR
+    await new Promise<void>(resolve => httpServer.listen({ port: PORT }, resolve));
+    !IS_PRODUCTION && console.log(`🚀 Development Server ready at http://localhost:${PORT}/graphql\n`);//NOSONAR
 };
 
 startServer();

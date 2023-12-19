@@ -39,7 +39,9 @@ const testUserData: IUser = {
     username: 'testUser',
     email: 'test@test.com',
     password: 'testPassword1!',
-    role: UserRoles.BASIC
+    role: UserRoles.BASIC,
+    webAuthnRegistered: false,
+    useWebAuthn: false,
 };
 
 beforeAll(async () => {

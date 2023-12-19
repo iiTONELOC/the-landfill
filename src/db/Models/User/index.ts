@@ -47,7 +47,7 @@ const UserSchema = new Schema<IUser, IUserModel, IUserMethods>({
     },
     password: {
         type: String,
-        required: true,
+        required: false,
         trim: true,
         minLength: 8,
         maxLength: 20
@@ -61,11 +61,20 @@ const UserSchema = new Schema<IUser, IUserModel, IUserMethods>({
         type: Schema.Types.ObjectId,
         ref: 'List',
         required: false
-    }]
-    // When the model is created we need to reference the user's lists
+    }],
+    useWebAuthn: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    webAuthnRegistered: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
 }, {
     id: false,
-    timestamps: true,
+    timestamps: true
 });
 
 
@@ -73,6 +82,12 @@ const UserSchema = new Schema<IUser, IUserModel, IUserMethods>({
 // istanbul ignore next
 UserSchema.pre('save', async function (next) {
     if (this.isNew || this.isModified('password')) {
+        // passwords may be empty for users that use webauthn so we don't validate them
+        if ((this.password === undefined || this.password === null || this.password === '') && this.useWebAuthn === true) {
+            next();
+            return;
+        }
+
         // validate that the password has at least one of the following:
         // uppercase letter, lowercase letter, number, special character
         // if not, throw a validation error
