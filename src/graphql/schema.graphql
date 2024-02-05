@@ -58,6 +58,12 @@ type Auth {
   user: User
 }
 
+type AddAppUserResponse {
+  token: ID!
+  user: User
+  appKey: String
+}
+
 type Query {
   me: User
   list(listId: ID!): List
@@ -73,9 +79,16 @@ type Mutation {
     password: String!
     deviceKey: String!
   ): Auth
+  loginUserApp(username: String!, password: String!, appKey: String!): Auth
   addUser(username: String!, email: String!, password: String!): Auth
+  addUserFromApp(
+    username: String!
+    email: String!
+    password: String!
+  ): AddAppUserResponse
   updateUser(username: String, email: String): User
   generateDeviceKey: String
+  generateAppKey: String
   deleteUser: User
   addList(name: String!, isDefault: Boolean): List
   updateList(listId: ID!, name: String, isDefault: Boolean): List
