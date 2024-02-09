@@ -7,3 +7,4 @@ lib
 .vscode
 coverage
 .DS_Store
+~/.nvm

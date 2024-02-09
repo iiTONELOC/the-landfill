@@ -72,20 +72,14 @@ type Query {
 }
 
 type Mutation {
-  # TODO: UPDATE the loginUserDevice to take a required API key
-  # TODO: ADD a Generate API Key mutation and create the necessary models and resolvers
-  loginUserDevice(
-    username: String!
-    password: String!
-    deviceKey: String!
-  ): Auth
+  loginUserDevice(username: String!, password: String!, deviceKey: String!): Auth
   loginUserApp(username: String!, password: String!, appKey: String!): Auth
+  refreshTokenFromApp(appKey: String!): Auth
+  regenerateAppKeyFromApp(appKey: String!): String
+  regenerateDeviceKeyFromApp(appKey: String!): String
+  regenerateDeviceKeyFromDevice(deviceKey: String!): String
   addUser(username: String!, email: String!, password: String!): Auth
-  addUserFromApp(
-    username: String!
-    email: String!
-    password: String!
-  ): AddAppUserResponse
+  addUserFromApp(username: String!, email: String!, password: String!): AddAppUserResponse
   updateUser(username: String, email: String): User
   generateDeviceKey: String
   generateAppKey: String
@@ -101,12 +95,7 @@ type Mutation {
     quantity: Int
     isCompleted: Boolean
   ): ListItem
-  updateListItem(
-    listItemId: ID!
-    notes: String
-    quantity: Int
-    isCompleted: Boolean
-  ): ListItem
+  updateListItem(listItemId: ID!, notes: String, quantity: Int, isCompleted: Boolean): ListItem
   removeFromList(listItemId: ID!, listId: ID!): ListItem
   addItemToDefaultList(
     barcode: String!
