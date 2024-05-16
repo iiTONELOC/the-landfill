@@ -278,27 +278,34 @@ export const userMutations = {
   },
   regenerateDeviceKeyFromDevice: async function regenerateDeviceKeyFromDevice(
     _: any,
-    {deviceKey}: {deviceKey: string},
-    {user}: AuthenticatedContext,
+    {deviceKey, username, password}: {deviceKey: string; username: string; password: string},
   ) {
     if (!deviceKey) {
       throw new GraphQLError('Unauthorized');
     }
-    //see if the user is authenticated - throws an error if not
-
-    await Promise.all([
-      authenticatedUser(user as UserModel),
-      validateDeviceKey(deviceKey, user?._id?.toString() ?? ''),
-    ]);
-
     try {
-      // generate a new device key
+      // verify the user
+      const user = await User.findOne({username}); //NOSONAR
+      // check if the password is valid
+      const validPassword = await user?.isCorrectPassword(password);
+
+      if (!user || !validPassword) {
+        throw new GraphQLError(INCORRECT_CREDENTIALS);
+      }
       // eslint-disable-next-line
-      // @ts-ignore
-      const newDeviceKey = await userMutations.generateDeviceKey(_, __, {user});
+      //@ts-ignore
+      const newDeviceKey = await userMutations.generateDeviceKey(_, {}, {user});
+
       return newDeviceKey;
     } catch (error) {
-      throw new GraphQLError('Error regenerating device key');
+      if (error?.toString().includes(INCORRECT_CREDENTIALS)) {
+        // eslint-disable-next-line
+        // @ts-ignore
+        throw new GraphQLError(INCORRECT_CREDENTIALS);
+      } else {
+        console.log('ERROR', error);
+        throw new GraphQLError('Error regenerating device key');
+      }
     }
   },
   regenerateAppKeyFromApp: async function regenerateAppKeyFromApp(

@@ -77,7 +77,7 @@ type Mutation {
   refreshTokenFromApp(appKey: String!): Auth
   regenerateAppKeyFromApp(appKey: String!): String
   regenerateDeviceKeyFromApp(appKey: String!): String
-  regenerateDeviceKeyFromDevice(deviceKey: String!): String
+  regenerateDeviceKeyFromDevice(deviceKey: String!, username: String!, password: String!): String
   addUser(username: String!, email: String!, password: String!): Auth
   addUserFromApp(username: String!, email: String!, password: String!): AddAppUserResponse
   updateUser(username: String, email: String): User
